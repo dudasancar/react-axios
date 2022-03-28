@@ -1,25 +1,61 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import api from "./services/api";
+import "./App.css";
 
-function App() {
+export default function App() {
+  // const [user, setUser] = useState();
+  const [category, setCategory] = useState([]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+
+  // useEffect(() => {
+  //   api
+  //     .get("/users/dudasancar")
+  //     .then((response) => setUser(response.data))
+  //     .catch((err) => {
+  //       console.error("ops! ocorreu um erro" + err);
+  //     });
+  // }, []);
+
+  const takeName = (e) => {
+    setName(e.target.value);
+  };
+
+  const takeDescription = (e) => {
+    setDescription(e.target.value);
+  };
+
+  useEffect(() => {
+    api
+      .get("/categories")
+      .then((response) => setCategory(response.data))
+      .catch((err) => console.error("ops! ocorreu um erro" + err));
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    api
+      .post("/categories", { name, description })
+      .then((response) => console.log(response.data))
+      .catch((err) => console.error("ops! ocorreu um erro" + err));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* <p>Usuário: {user?.login}</p>
+      <p>Biografia: {user?.bio}</p> */}
+      <form onSubmit={handleSubmit}>
+        <input value={name} onChange={takeName} />
+        <input value={description} onChange={takeDescription} />
+        <button type="submit">salvar</button>
+      </form>
+      {category.map((c) => (
+        <>
+          <p>Categoria: {c?.name}</p>
+          <p>Descrição: {c?.description}</p>
+          <button>deletar</button>
+        </>
+      ))}
     </div>
   );
 }
-
-export default App;
